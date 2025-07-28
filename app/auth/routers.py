@@ -19,7 +19,7 @@ def login(request: schemas.LoginRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == request.email).first()
     if not user or not auth_handler.verify_password(request.password, user.password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
+    access_token =auth_handler.create_access_token(data={"sub": str(user.id)})
 
-    access_token = auth_handler.create_access_token(data={"sub": str(user.email)})  # Fix here
     return {"access_token": access_token, "token_type": "bearer"}
 
